@@ -1,20 +1,21 @@
 //TMP36 Pin Variables
-int tempPin = A0; //temp sensor
-int timePin = A2; //pot pin to adjust time since
+int tempPin = A0; //temp control knob
+int timePin = A2; //time control knob
 int lightPin = A1; //light sensor
 int closePin = 2;  //close relay
 int openPin = 4;   // open relay
-
-
-
+int tempreadPin = A3;//temp sensor
+int heatlampPin = 6; // heatlamp relay
 
 void setup()
 {
   pinMode(tempPin, INPUT);
   pinMode(timePin, INPUT);
   pinMode(lightPin, INPUT);
-  pinMode(closePin, INPUT);
-  pinMode(openPin, INPUT);
+  pinMode(closePin, OUTPUT);
+  pinMode(openPin, OUTPUT);
+  pinMode(tempreadPin, INPUT);
+  pinMode(heatlampPin, OUTPUT);
   Serial.begin(9600);
 }
 
@@ -25,10 +26,7 @@ unsigned long now;
 enum STATE_T {
   STATE_OPEN,
   STATE_WAITING,
-  STATE_CLOSED,
-  STATE_HOTDOG,
-  STATE_YUMM,
-  STATE_YUCK
+  STATE_CLOSED
 };
 
 
@@ -38,17 +36,17 @@ int nextState; // don't initialize
 
 void loop()
 {
+
   // START STATE MACHINE
   // these are outside the state machine and always update
 
   // take new data
   float tempValue = analogRead(tempPin);
   float lightValue = analogRead(lightPin);
+  int tempVal = analogRead(tempPin);
+  int timeVal = analogRead(timePin);
   now = millis();
   //  Serial.print(lightValue); Serial.println(" units of photo-sensor");
-  int closePinValue = digitalRead(closePin);
-  int openPinValue = digitalRead(openPin);
-
 
 
   nextState = state;
@@ -71,47 +69,7 @@ void loop()
       break;
     case STATE_CLOSED:
       Serial.println("CLOSED");
-      if (lightValue > 400) // highet is brither
-      {
-        nextState = STATE_HOTDOG;
-      }
-      break;
-    case STATE_HOTDOG:
-      Serial.println("HOTDOG");
-      if (closePinValue == HIGH)
-      {
-        nextState = STATE_YUMM;
-        motionTime = now;
-      }
-      if (openPinValue == HIGH)
-      {
-        nextState = STATE_YUCK;
-        motionTime = now;
-      }
-      if(openPinValue == HIGH && closePinValue == HIGH)
-      {
-        nextState = STATE_HOTDOG;
-      }
-      break;
-    case STATE_YUMM:
-      Serial.println("YUMM");
-      if ((now - motionTime) >= 2000)
-      {
-        //motionTime = now;
-        nextState = STATE_HOTDOG;
-      }
-      break;
-    case STATE_YUCK:
-      Serial.println("YUCK");
-      if ((now - motionTime) >= 2000)
-      {
-        // motionTime = now;
-        nextState = STATE_HOTDOG;
-      }
-      break;
-    default:
-      Serial.println("SOMETHING WRONG");
-      break;
+
   }
 
   state = nextState;
