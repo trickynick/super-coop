@@ -1,20 +1,21 @@
 //TMP36 Pin Variables
-int tempPin = A0; //temp control knob
-int timePin = A2; //time control knob
+int tempknobPin = A0; //temp control knob
+int timeknobPin = A2; //time control knob
 int lightPin = A1; //light sensor
 int closePin = 2;  //close relay
 int openPin = 4;   // open relay
-int tempreadPin = A3;//temp sensor
+int tempPin = A3;//temp sensor
 int heatlampPin = 6; // heatlamp relay
+int open1 = 0;
 
 void setup()
 {
-  pinMode(tempPin, INPUT);
-  pinMode(timePin, INPUT);
+  pinMode(tempknobPin, INPUT);
+  pinMode(timeknobPin, INPUT);
   pinMode(lightPin, INPUT);
   pinMode(closePin, OUTPUT);
   pinMode(openPin, OUTPUT);
-  pinMode(tempreadPin, INPUT);
+  pinMode(tempPin, INPUT);
   pinMode(heatlampPin, OUTPUT);
   Serial.begin(9600);
 }
@@ -41,12 +42,14 @@ void loop()
   // these are outside the state machine and always update
 
   // take new data
-  float tempValue = analogRead(tempPin);
-  float lightValue = analogRead(lightPin);
-  int tempVal = analogRead(tempPin);
-  int timeVal = analogRead(timePin);
+  float tempreture = analogRead(tempPin);
+  float brightness = analogRead(lightPin);
+  int temprange = analogRead(tempknobPin);
+  int timerange = analogRead(timeknobPin);
   now = millis();
   //  Serial.print(lightValue); Serial.println(" units of photo-sensor");
+Serial.print(tempreture);Serial.println("temp");
+Serial.print(timerange*7038);Serial.println("time");
 
 
   nextState = state;
@@ -54,7 +57,18 @@ void loop()
   {
     case STATE_OPEN:
       Serial.println("OPEN");
-      if (lightValue < 330) // higher is brighter
+      if(open1 == 1)//openPin HIGH
+      digitalWrite(openPin, LOW);
+      delay(5000);
+      digitalWrite(openPin, HIGH);
+
+      open1 = 0;
+
+      if (open1 == 0)
+
+      digitalWrite(openPin, HIGH);
+      
+      if (brightness < 330) // higher is brighter
       {
         motionTime = now; // save "now" into cubbyhole
         nextState = STATE_WAITING;
@@ -62,13 +76,18 @@ void loop()
       break;
     case STATE_WAITING:
       Serial.println("WAITING");
-      if ((now - motionTime) >= 2000)
+      if ((now - motionTime) >= timerange*7038)
       {
         nextState = STATE_CLOSED;
       }
       break;
     case STATE_CLOSED:
       Serial.println("CLOSED");
+         if (brightness > 330) // higher is brighter
+      {
+        motionTime = now; // save "now" into cubbyhole
+        nextState = STATE_OPEN;
+      }
 
   }
 
@@ -77,8 +96,14 @@ void loop()
   delay(500);
 
   // END STATE MACHINE
-
-
+if(analogRead(tempPin) <= temprange)
+{
+  digitalWrite(heatlampPin, LOW);
+}
+else
+{
+  digitalWrite(heatlampPin, HIGH);
+}
 
 
 
