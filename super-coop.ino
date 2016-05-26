@@ -46,15 +46,19 @@ void loop()
   float brightness = analogRead(lightPin);
   int temprange = analogRead(tempknobPin);
   int knob = analogRead(timeknobPin);
-  int rerangetime = map(knob, 0, 1023, 600, 14400);
+  unsigned long rerangetime = map(knob, 13, 1020L, (long)(10)*60, (long)(4)*60*60);
+  rerangetime = rerangetime * 1000;// 1000 = real time
   now = millis();
   //  Serial.print(lightValue); Serial.println(" units of photo-sensor");
   Serial.print("\n\n\n__________\n");
   Serial.print("Time: ");
   Serial.print(rerangetime);
   Serial.print("\n");
-  Serial.print("Temp: ");
-  Serial.print(tempreture);
+//  Serial.print("Temp: ");
+//  Serial.print(tempreture);
+//  Serial.print("\n");
+  Serial.print("knob: ");
+  Serial.print(knob);
   Serial.print("\n");
 
 
