@@ -27,7 +27,8 @@ unsigned long now;
 enum STATE_T {
   STATE_OPEN,
   STATE_WAITING,
-  STATE_CLOSED
+  STATE_CLOSED,
+  STATE_OPENING
 };
 
 
@@ -46,17 +47,17 @@ void loop()
   float brightness = analogRead(lightPin);
   int temprange = analogRead(tempknobPin);
   int knob = analogRead(timeknobPin);
-  unsigned long rerangetime = map(knob, 13, 1020L, (long)(10)*60, (long)(4)*60*60);
-  rerangetime = rerangetime * 1000;// 1000 = real time
+  unsigned long rerangetime = map(knob, 13, 1020L, (long)(10) * 60, (long)(4) * 60 * 60);
+  rerangetime = rerangetime * 1;// 1000 = real time
   now = millis();
   //  Serial.print(lightValue); Serial.println(" units of photo-sensor");
   Serial.print("\n\n\n__________\n");
   Serial.print("Time: ");
   Serial.print(rerangetime);
   Serial.print("\n");
-//  Serial.print("Temp: ");
-//  Serial.print(tempreture);
-//  Serial.print("\n");
+  //  Serial.print("Temp: ");
+  //  Serial.print(tempreture);
+  //  Serial.print("\n");
   Serial.print("knob: ");
   Serial.print(knob);
   Serial.print("\n");
@@ -85,12 +86,18 @@ void loop()
       if (brightness > 330) // higher is brighter
       {
         motionTime = now; // save "now" into cubbyhole
-        nextState = STATE_OPEN;
+        nextState = STATE_OPENING;
       }
+      break;
+    case STATE_OPENING:
+      Serial.println("OPENING");
+      Serial.print("do worak here\n");
+      nextState = STATE_OPEN;
+      break;
 
   }
 
-  
+
   state = nextState;
 
   delay(500);
