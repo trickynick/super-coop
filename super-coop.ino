@@ -48,8 +48,8 @@ void loop()
   int timerange = analogRead(timeknobPin);
   now = millis();
   //  Serial.print(lightValue); Serial.println(" units of photo-sensor");
-Serial.print(tempreture);Serial.println("temp");
-Serial.print(timerange*7038);Serial.println("time");
+  Serial.print(tempreture); Serial.println("temp");
+  Serial.print(timerange * 7038); Serial.println("time");
 
 
   nextState = state;
@@ -57,17 +57,19 @@ Serial.print(timerange*7038);Serial.println("time");
   {
     case STATE_OPEN:
       Serial.println("OPEN");
-      if(open1 == 1)//openPin HIGH
-      digitalWrite(openPin, LOW);
-      delay(5000);
-      digitalWrite(openPin, HIGH);
-
+      if (open1 == 1) //openPin HIGH
+      {
+        digitalWrite(openPin, LOW);
+        delay(5000);
+        digitalWrite(openPin, HIGH);
+      }
       open1 = 0;
+      else
+      {
+        if (open1 == 0)
 
-      if (open1 == 0)
-
-      digitalWrite(openPin, HIGH);
-      
+          digitalWrite(openPin, HIGH);
+      }
       if (brightness < 330) // higher is brighter
       {
         motionTime = now; // save "now" into cubbyhole
@@ -76,14 +78,14 @@ Serial.print(timerange*7038);Serial.println("time");
       break;
     case STATE_WAITING:
       Serial.println("WAITING");
-      if ((now - motionTime) >= timerange*7038)
+      if ((now - motionTime) >= timerange * 7038)
       {
         nextState = STATE_CLOSED;
       }
       break;
     case STATE_CLOSED:
       Serial.println("CLOSED");
-         if (brightness > 330) // higher is brighter
+      if (brightness > 330) // higher is brighter
       {
         motionTime = now; // save "now" into cubbyhole
         nextState = STATE_OPEN;
@@ -96,14 +98,14 @@ Serial.print(timerange*7038);Serial.println("time");
   delay(500);
 
   // END STATE MACHINE
-if(analogRead(tempPin) <= temprange)
-{
-  digitalWrite(heatlampPin, LOW);
-}
-else
-{
-  digitalWrite(heatlampPin, HIGH);
-}
+  if (analogRead(tempPin) <= temprange)
+  {
+    digitalWrite(heatlampPin, LOW);
+  }
+  else
+  {
+    digitalWrite(heatlampPin, HIGH);
+  }
 
 
 
