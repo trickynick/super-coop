@@ -28,7 +28,8 @@ enum STATE_T {
   STATE_OPEN,
   STATE_WAITING,
   STATE_CLOSED,
-  STATE_OPENING
+  STATE_OPENING,
+  STATE_CLOSING
 };
 
 
@@ -68,6 +69,8 @@ void loop()
   {
     case STATE_OPEN:
       Serial.println("OPEN");
+      digitalWrite(openPin, HIGH);
+      digitalWrite(closePin, HIGH);
       if (brightness < 330) // higher is brighter
       {
         motionTime = now; // save "now" into cubbyhole
@@ -78,7 +81,7 @@ void loop()
       Serial.println("WAITING");
       if ((now - motionTime) >= rerangetime)
       {
-        nextState = STATE_CLOSED;
+        nextState = STATE_CLOSING;
       }
       break;
     case STATE_CLOSED:
@@ -91,10 +94,18 @@ void loop()
       break;
     case STATE_OPENING:
       Serial.println("OPENING");
-      Serial.print("do worak here\n");
+      digitalWrite(openPin, LOW);
+      delay(5000);
+      digitalWrite(openPin, HIGH);
       nextState = STATE_OPEN;
       break;
-
+    case STATE_CLOSING:
+      Serial.println("CLOSING");
+      digitalWrite(closePin, LOW);
+      delay(5000);
+      digitalWrite(closePin, HIGH);
+      nextState = STATE_CLOSED;
+      break;
   }
 
 
