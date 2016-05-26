@@ -45,11 +45,12 @@ void loop()
   float tempreture = analogRead(tempPin);
   float brightness = analogRead(lightPin);
   int temprange = analogRead(tempknobPin);
-  int timerange = analogRead(timeknobPin);
+  int knob = analogRead(timeknobPin);
+  int rerangetime = map(knob,0,1023,600,14400);
   now = millis();
   //  Serial.print(lightValue); Serial.println(" units of photo-sensor");
   Serial.print(tempreture); Serial.println("temp");
-  Serial.print(timerange * 7038); Serial.println("time");
+  Serial.print(rerangetime); Serial.println("time");
 
 
   nextState = state;
@@ -57,19 +58,6 @@ void loop()
   {
     case STATE_OPEN:
       Serial.println("OPEN");
-      if (open1 == 1) //openPin HIGH
-      {
-        digitalWrite(openPin, LOW);
-        delay(5000);
-        digitalWrite(openPin, HIGH);
-      }
-      open1 = 0;
-      else
-      {
-        if (open1 == 0)
-
-          digitalWrite(openPin, HIGH);
-      }
       if (brightness < 330) // higher is brighter
       {
         motionTime = now; // save "now" into cubbyhole
@@ -78,7 +66,7 @@ void loop()
       break;
     case STATE_WAITING:
       Serial.println("WAITING");
-      if ((now - motionTime) >= timerange * 7038)
+      if ((now - motionTime) >= rerangetime)
       {
         nextState = STATE_CLOSED;
       }
