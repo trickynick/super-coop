@@ -5,8 +5,7 @@ int lightPin = A1; //light sensor
 int closePin = 2;  //close relay
 int openPin = 4;   // open relay
 int tempPin = A3;//temp sensor
-int heatlampPin = 6; // heatlamp relay
-int open1 = 0;
+int heatlampPin = 6; // heatlamp rel
 
 void setup()
 {
@@ -47,20 +46,21 @@ void loop()
   float tempreture = analogRead(tempPin);
   float brightness = analogRead(lightPin);
   int temprange = analogRead(tempknobPin);
-  int knob = analogRead(timeknobPin);
-  unsigned long rerangetime = map(knob, 13, 1020L, (long)(10) * 60, (long)(4) * 60 * 60);
+  int timeknob = analogRead(timeknobPin);
+  unsigned long rerangetime = map(timeknob, 13, 1020L, (long)(10) * 60, (long)(4) * 60 * 60);
   rerangetime = rerangetime * 1;// 1000 = real time
   now = millis();
   //  Serial.print(lightValue); Serial.println(" units of photo-sensor");
   Serial.print("\n\n\n__________\n");
   Serial.print("Time: ");
-  Serial.print(rerangetime);
+  Serial.print(rerangetime/1000/60);
+  Serial.print(" Min");
   Serial.print("\n");
-  //  Serial.print("Temp: ");
-  //  Serial.print(tempreture);
-  //  Serial.print("\n");
-  Serial.print("knob: ");
-  Serial.print(knob);
+  Serial.print("Temp: ");
+  Serial.print(tempreture/2);
+  Serial.print("\n");
+  Serial.print("Time knob: ");
+  Serial.print(timeknob);
   Serial.print("\n");
 
 
