@@ -18,6 +18,7 @@ void setup()
   pinMode(tempPin, INPUT);
   pinMode(heatlampPin, OUTPUT);
   Serial.begin(9600);
+
 }
 
 unsigned long motionTime; //Start the clock
@@ -44,22 +45,24 @@ void loop()
   // these are outside the state machine and always update
 
   // take new data
+
   float tempknob = analogRead(tempknobPin);
-  float tempretureC = (5.0 * analogRead(tempPin) *100.0);
-  float tempretureF = (tempretureC *1.8)+32;
+  float tempretureC = analogRead(tempPin);
+  float tempretureF = analogRead(tempPin);
   float brightness = analogRead(lightPin);
   int temprange = analogRead(tempknobPin);
   int timeknob = analogRead(timeknobPin);
   unsigned long rerangetime = map(timeknob, 13, 1020L, (long)(10) * 60, (long)(4) * 60 * 60);
   rerangetime = rerangetime * 1000;// 1000 = real time
+
   //unsigned long rerangetemp = map
   now = millis();
   Serial.print("\n\n\n__________\n");
   Serial.print("Time: ");
-  Serial.print(rerangetime/1000/60);
+  Serial.print(rerangetime / 1000 / 60);
   Serial.print(" Min");
   Serial.print("\n");
-  Serial.print("Temp: ");
+  Serial.print("Temp F: ");
   Serial.print(tempretureF);
   Serial.print("\n");
   Serial.print("Time knob: ");
@@ -68,7 +71,6 @@ void loop()
   Serial.print("Temp Knob: ");
   Serial.print(tempknob);
   Serial.print("\n");
-
 
   nextState = state;
   switch (state)
