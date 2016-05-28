@@ -45,7 +45,8 @@ void loop()
 
   // take new data
   float tempknob = analogRead(tempknobPin);
-  float tempreture = analogRead(tempPin);
+  float tempretureC = (5.0 * analogRead(tempPin) *100.0);
+  float tempretureF = (tempretureC *1.8)+32;
   float brightness = analogRead(lightPin);
   int temprange = analogRead(tempknobPin);
   int timeknob = analogRead(timeknobPin);
@@ -59,7 +60,7 @@ void loop()
   Serial.print(" Min");
   Serial.print("\n");
   Serial.print("Temp: ");
-  Serial.print(tempreture);
+  Serial.print(tempretureF);
   Serial.print("\n");
   Serial.print("Time knob: ");
   Serial.print(timeknob);
